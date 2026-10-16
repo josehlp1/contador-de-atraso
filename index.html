@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kerdos: Contador de Atraso</title>
+<meta name="description" content="Paródia: contador oficial (e não oficial) do atraso do projeto Kerdos.">
+<link rel="icon" href="assets/unifique-fibra.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Inter:wght@400;600;800&family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --azul: #212492;
+    --azul-claro: #3b3fd1;
+    --amarelo: #ffc928;
+    --vermelho: #e5263b;
+    --bg: #f4f5ff;
+    --card: #ffffff;
+    --texto: #15163a;
+    --muted: #5b5d84;
+    --borda: #dcdcf3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d0e2b;
+      --card: #17184a;
+      --texto: #eef0ff;
+      --muted: #a7a9d6;
+      --borda: #2b2d6e;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: Inter, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--texto);
+    overflow-x: hidden;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+  section { padding: 56px 0; }
+  h2 { font-family: Bungee, sans-serif; font-weight: 400; font-size: clamp(1.5rem, 4vw, 2.3rem); margin: 0 0 12px; }
+  .sub { color: var(--muted); margin: 0 0 28px; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    background: radial-gradient(circle at 20% 10%, var(--azul-claro), var(--azul) 60%);
+    color: #fff;
+    text-align: center;
+    padding: 40px 0 72px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ticker {
+    background: var(--amarelo); color: #1a1a1a; font-weight: 800;
+    white-space: nowrap; overflow: hidden; padding: 8px 0; font-size: .9rem;
+  }
+  .ticker span { display: inline-block; padding-left: 100%; animation: ticker 28s linear infinite; }
+  @keyframes ticker { to { transform: translateX(-100%); } }
+  .logo {
+    width: min(260px, 60vw); margin: 32px auto 8px; display: block; cursor: pointer;
+    animation: wobble 3s ease-in-out infinite; user-select: none;
+  }
+  @keyframes wobble {
+    0%,100% { transform: rotate(-3deg) scale(1); }
+    50% { transform: rotate(3deg) scale(1.04); }
+  }
+  .presents { opacity: .8; letter-spacing: .2em; text-transform: uppercase; font-size: .8rem; }
+  .hero h1 {
+    font-family: Bungee, sans-serif; font-weight: 400;
+    font-size: clamp(2.6rem, 11vw, 6rem); margin: 8px 0 0; line-height: 1;
+    text-shadow: 4px 4px 0 var(--vermelho);
+  }
+  .hero h1 sup { font-size: .35em; }
+  .prevista { font-size: clamp(1rem, 3vw, 1.35rem); margin: 14px 0 28px; }
+  .prevista b { color: var(--amarelo); }
+  .loadbar {
+    max-width: 520px; margin: 0 auto; background: rgba(255,255,255,.15);
+    border-radius: 999px; height: 28px; overflow: hidden; position: relative; border: 2px solid rgba(255,255,255,.4);
+  }
+  .loadbar i {
+    display: block; height: 100%; width: 99%;
+    background: repeating-linear-gradient(45deg, var(--amarelo) 0 16px, #ffb300 16px 32px);
+    animation: loadstuck 4s ease-in-out infinite;
+  }
+  @keyframes loadstuck {
+    0% { width: 97%; } 45% { width: 99%; } 55% { width: 99%; } 70% { width: 98%; } 100% { width: 97%; }
+  }
+  .loadbar em {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    font-style: normal; font-weight: 800; color: #1a1a1a; font-size: .85rem;
+  }
+  .loadmsg { margin-top: 10px; font-size: .9rem; opacity: .85; min-height: 1.4em; }
+
+  /* ---------- Contador ---------- */
+  .counter {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 8px;
+  }
+  .unit {
+    background: var(--card); border: 2px solid var(--borda); border-radius: 18px;
+    padding: 18px 8px; text-align: center; box-shadow: 0 6px 0 var(--azul);
+  }
+  .num {
+    font-family: Bungee, sans-serif; font-size: clamp(2rem, 8vw, 4.2rem); color: var(--vermelho);
+    display: inline-block; line-height: 1;
+  }
+  .num.pop { animation: pop .35s ease-out; }
+  @keyframes pop {
+    0% { transform: translateY(-40%) scale(1.2); opacity: 0; }
+    100% { transform: none; opacity: 1; }
+  }
+  .lbl { color: var(--muted); font-weight: 600; margin-top: 6px; font-size: .9rem; }
+  .meta { text-align: center; margin-top: 22px; color: var(--muted); }
+  .meta b { color: var(--texto); }
+  .badge {
+    display: inline-block; background: var(--vermelho); color: #fff; font-weight: 800;
+    padding: 6px 14px; border-radius: 999px; animation: pulse 1.2s infinite;
+  }
+  @keyframes pulse { 50% { transform: scale(1.06); box-shadow: 0 0 0 10px rgba(229,38,59,.15); } }
+
+  /* ---------- Atraso real (dossiê) ---------- */
+  .dossie {
+    position: relative; background: #f5ecd3; color: #2a2414;
+    font-family: "Special Elite", monospace; border-radius: 6px;
+    padding: 40px 24px 32px; box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    transform: rotate(-1deg); overflow: hidden;
+  }
+  .dossie h2 { font-family: "Special Elite", monospace; color: #2a2414; }
+  .dossie .redact { background: #111; color: #111; padding: 0 4px; border-radius: 2px; }
+  .stamp {
+    position: absolute; top: 18px; right: -10px; transform: rotate(14deg) scale(3); opacity: 0;
+    border: 5px solid var(--vermelho); color: var(--vermelho); font-family: Bungee, sans-serif;
+    padding: 6px 16px; font-size: clamp(.9rem, 3vw, 1.4rem); letter-spacing: .1em;
+    border-radius: 6px; pointer-events: none;
+  }
+  .stamp.on { animation: stamp .45s cubic-bezier(.2,1.6,.4,1) forwards; }
+  @keyframes stamp { to { transform: rotate(14deg) scale(1); opacity: .85; } }
+  .bigdelay {
+    font-family: Bungee, sans-serif; color: var(--vermelho);
+    font-size: clamp(1.6rem, 6.5vw, 3.4rem); line-height: 1.15; margin: 10px 0 18px;
+  }
+  .equiv { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 20px; }
+  .equiv div {
+    border: 2px dashed #8b7a4a; padding: 12px; border-radius: 6px; background: rgba(255,255,255,.35);
+  }
+  .equiv b { display: block; font-size: 1.6rem; font-family: Bungee, sans-serif; color: var(--azul); }
+
+  /* ---------- Timeline ---------- */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content: ""; position: absolute; left: 9px; top: 0; bottom: 0; width: 4px;
+    background: linear-gradient(var(--azul), var(--vermelho)); border-radius: 4px;
+  }
+  .ev {
+    position: relative; background: var(--card); border: 2px solid var(--borda); border-radius: 14px;
+    padding: 14px 16px; margin-bottom: 16px; opacity: 0; transform: translateX(40px);
+    transition: opacity .6s, transform .6s cubic-bezier(.2,1.4,.4,1);
+  }
+  .ev.show { opacity: 1; transform: none; }
+  .ev::before {
+    content: ""; position: absolute; left: -27px; top: 18px; width: 14px; height: 14px;
+    border-radius: 50%; background: var(--amarelo); border: 3px solid var(--azul);
+  }
+  .ev time { font-weight: 800; color: var(--azul-claro); font-size: .85rem; }
+  .ev p { margin: 4px 0 0; font-size: 1.05rem; }
+  .ev small { color: var(--muted); }
+
+  /* ---------- Anderson ---------- */
+  .anderson {
+    text-align: center; background: var(--card); border: 3px solid var(--azul);
+    border-radius: 24px; padding: 36px 20px; box-shadow: 0 10px 0 var(--azul);
+  }
+  .anderson h2 { margin-bottom: 20px; }
+  .btn {
+    font: 800 1.05rem Inter, sans-serif; border: 0; cursor: pointer; border-radius: 999px;
+    padding: 14px 28px; background: var(--amarelo); color: #1a1a1a; box-shadow: 0 5px 0 #b38600;
+    transition: transform .1s;
+  }
+  .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #b38600; }
+  .spinner {
+    width: 54px; height: 54px; border: 6px solid var(--borda); border-top-color: var(--azul);
+    border-radius: 50%; margin: 18px auto; animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .resp-nao {
+    font-family: Bungee, sans-serif; font-size: clamp(4rem, 20vw, 9rem); color: var(--vermelho);
+    line-height: 1; animation: slam .5s cubic-bezier(.2,1.8,.4,1);
+  }
+  @keyframes slam { from { transform: scale(4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .resp-pe {
+    font-size: clamp(1.3rem, 5vw, 2rem); font-weight: 800; opacity: 0; margin-top: 6px;
+  }
+  .resp-pe.on { animation: fadeShake 1s ease-out forwards; }
+  @keyframes fadeShake {
+    0% { opacity: 0; transform: translateX(0); }
+    40% { opacity: 1; transform: translateX(-8px); }
+    55% { transform: translateX(8px); }
+    70% { transform: translateX(-5px); }
+    85% { transform: translateX(3px); }
+    100% { opacity: 1; transform: none; }
+  }
+  .hidden { display: none !important; }
+  .fine { color: var(--muted); font-size: .8rem; margin-top: 14px; }
+  .loadstep { color: var(--muted); min-height: 1.4em; }
+
+  /* ---------- Status board ---------- */
+  .board { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .tile {
+    background: var(--card); border: 2px solid var(--borda); border-radius: 16px; padding: 18px;
+  }
+  .tile h3 { margin: 0 0 8px; font-size: .85rem; text-transform: uppercase; color: var(--muted); letter-spacing: .08em; }
+  .tile .v { font-family: Bungee, sans-serif; font-size: 1.6rem; }
+  .blink { animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: .25; } }
+  .prog { height: 12px; background: var(--borda); border-radius: 999px; margin-top: 10px; overflow: hidden; }
+  .prog i { display: block; height: 100%; width: 87%; background: var(--azul-claro); }
+
+  /* ---------- Botão fujão ---------- */
+  .fuga { position: relative; height: 180px; margin-top: 24px; border: 2px dashed var(--borda); border-radius: 16px; }
+  .fuga p { position: absolute; left: 0; right: 0; bottom: 8px; text-align: center; color: var(--muted); font-size: .85rem; margin: 0; }
+  #fujao {
+    position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%);
+    background: #1db954; color: #fff; box-shadow: 0 5px 0 #11843a;
+    transition: left .25s ease, top .25s ease; white-space: nowrap;
+  }
+
+  /* ---------- Caracóis ---------- */
+  .snail {
+    position: fixed; top: -40px; font-size: 28px; pointer-events: none; z-index: 50;
+    animation: fall linear forwards;
+  }
+  @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+  .walker {
+    position: fixed; bottom: 6px; left: -60px; font-size: 32px; z-index: 40; pointer-events: none;
+    animation: walk 90s linear infinite;
+  }
+  @keyframes walk { to { left: 105vw; } }
+
+  footer { text-align: center; padding: 40px 16px 70px; color: var(--muted); font-size: .85rem; }
+  footer img { width: 120px; opacity: .6; display: block; margin: 0 auto 12px; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: 60px; transform: translateX(-50%) translateY(150%);
+    background: var(--texto); color: var(--bg); padding: 12px 18px; border-radius: 12px; font-weight: 600;
+    transition: transform .4s cubic-bezier(.2,1.5,.4,1); z-index: 60; max-width: calc(100vw - 32px); text-align: center;
+  }
+  .toast.on { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 560px) {
+    .counter { grid-template-columns: repeat(2, 1fr); }
+    .dossie { transform: none; padding: 48px 16px 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ticker"><span>
+  🚨 URGENTE: Kerdos segue "quase pronto" &nbsp;•&nbsp; Fontes confirmam: "falta só um detalhezinho" &nbsp;•&nbsp;
+  Meteorologia prevê entrega com 0% de chance nesta semana &nbsp;•&nbsp; Reunião de alinhamento sobre a reunião de alinhamento marcada para amanhã &nbsp;•&nbsp;
+  🐌 Caracol bate recorde e chega antes do Kerdos &nbsp;•&nbsp;
+</span></div>
+
+<header class="hero">
+  <div class="wrap">
+    <img class="logo" id="logo" src="assets/unifique-logo-white.svg" alt="Logo Unifique">
+    <div class="presents">apresenta, com orgulho e atraso</div>
+    <h1>KERDOS<sup>™</sup></h1>
+    <p class="prevista">Entrega prevista: <b>Em Breve™</b></p>
+    <div class="loadbar" aria-label="Progresso do deploy"><i></i><em id="loadpct">99%</em></div>
+    <div class="loadmsg" id="loadmsg">Compilando desculpas...</div>
+  </div>
+</header>
+
+<main>
+  <section>
+    <div class="wrap">
+      <h2>⏱️ Contador oficial de atraso</h2>
+      <p class="sub">Prazo combinado: <b id="dataOficial">15/10/2026</b>. Desde então, o relógio não para (ao contrário do projeto).</p>
+      <div class="counter" id="c1">
+        <div class="unit"><span class="num" data-k="d">0</span><div class="lbl">dias</div></div>
+        <div class="unit"><span class="num" data-k="h">00</span><div class="lbl">horas</div></div>
+        <div class="unit"><span class="num" data-k="m">00</span><div class="lbl">minutos</div></div>
+        <div class="unit"><span class="num" data-k="s">00</span><div class="lbl">segundos</div></div>
+      </div>
+      <p class="meta"><span class="badge">ATRASADO</span><br><br>Agora são <b id="agora">--/--/---- --:--:--</b> (horário de Brasília) e o Kerdos ainda não chegou.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="dossie" id="dossie">
+        <div class="stamp" id="stamp">CONFIDENCIAL</div>
+        <h2>📁 O atraso de verdade</h2>
+        <p>Documento interno vazado revela que a entrega <span class="redact">██████</span> deveria ter acontecido em <b id="dataReal">15/10/2024</b>. Ou seja, o "1 dia de atraso" acima é, digamos, uma <i>estimativa otimista</i>.</p>
+        <div class="bigdelay" id="realDelay">— anos, — dias</div>
+        <p>Total: <b id="realHoras">—</b> horas. Ou <b id="realSeg">—</b> segundos, se você quiser chorar com mais precisão.</p>
+        <div class="equiv">
+          <div><b id="eqCafe">—</b>cafés tomados em daily</div>
+          <div><b id="eqSprint">—</b>sprints de 2 semanas</div>
+          <div><b id="eqReuniao">—</b>reuniões de alinhamento</div>
+          <div><b id="eqSemana">—</b>vezes que alguém disse "semana que vem sai"</div>
+          <div><b id="eqLua">—</b>luas cheias testemunharam isso</div>
+          <div><b id="eqCusto">—</b>em post-its de "TODO"</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>📜 Linha do tempo das desculpas</h2>
+      <p class="sub">Registros históricos, com reconstituição artística.</p>
+      <div class="timeline" id="timeline"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="anderson">
+        <h2>🤔 Anderson já foi demitido?</h2>
+        <div id="andStart"><button class="btn" id="andBtn">Consultar o RH</button></div>
+        <div id="andLoading" class="hidden">
+          <div class="spinner"></div>
+          <div class="loadstep" id="andStep">Consultando RH...</div>
+        </div>
+        <div id="andResult" class="hidden">
+          <div class="resp-nao">NÃO</div>
+          <div class="resp-pe" id="andPe">...por enquanto. 👀</div>
+          <p class="fine">Última verificação: <span id="andData"></span>. Resultado sujeito a alterações sem aviso prévio.</p>
+          <button class="btn" id="andAgain" style="margin-top:12px">Verificar de novo (vai que...)</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2>📊 Painel de status (super oficial)</h2>
+      <div class="board">
+        <div class="tile"><h3>Status</h3><div class="v blink">🟡 EM ANDAMENTO</div></div>
+        <div class="tile"><h3>Progresso</h3><div class="v">87%</div><div class="prog"><i></i></div><small style="color:var(--muted)">(desde 15/10/2024)</small></div>
+        <div class="tile"><h3>Próxima entrega</h3><div class="v" id="proxEntrega">—</div><small style="color:var(--muted)">(prazo recalculado automaticamente)</small></div>
+        <div class="tile"><h3>Confiança do time</h3><div class="v">📉 Sim</div></div>
+      </div>
+      <div class="fuga" id="fuga">
+        <button class="btn" id="fujao">🚀 Entregar Kerdos agora</button>
+        <p>Tente clicar. Boa sorte.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <img src="assets/unifique-logo.svg" alt="Unifique">
+  <p><b>Paródia.</b> Site não oficial, feito com carinho e zero ligação com a Unifique.<br>
+  Logos e marcas pertencem à Unifique Telecomunicações S.A.<br>
+  Nenhum Kerdos foi entregue durante a produção deste site.</p>
+</footer>
+
+<div class="walker" aria-hidden="true">🐌</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  const TZ = 'America/Sao_Paulo';
+  const OFICIAL = new Date('2026-10-15T00:00:00-03:00');
+  const REAL = new Date('2024-10-15T00:00:00-03:00');
+  const fmtNum = n => Math.floor(n).toLocaleString('pt-BR');
+  const fmtData = new Intl.DateTimeFormat('pt-BR', { timeZone: TZ, day: '2-digit', month: '2-digit', year: 'numeric' });
+  const fmtDataHora = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: TZ, day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
+  });
+  const $ = id => document.getElementById(id);
+
+  $('dataOficial').textContent = fmtData.format(OFICIAL);
+  $('dataReal').textContent = fmtData.format(REAL);
+
+  // ---- Contador principal ----
+  const nums = {};
+  document.querySelectorAll('#c1 .num').forEach(el => nums[el.dataset.k] = el);
+  function setNum(k, v) {
+    const el = nums[k];
+    if (el.textContent === v) return;
+    el.textContent = v;
+    el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+  }
+  const pad = n => String(n).padStart(2, '0');
+
+  // Diferença em anos/dias de calendário (aproximação boa o suficiente pra piada)
+  function anosDias(from, to) {
+    let anos = to.getFullYear() - from.getFullYear();
+    const aniv = new Date(from); aniv.setFullYear(from.getFullYear() + anos);
+    if (aniv > to) { anos--; aniv.setFullYear(from.getFullYear() + anos); }
+    const dias = Math.floor((to - aniv) / 86400000);
+    return { anos, dias };
+  }
+
+  function tick() {
+    const now = new Date();
+    let diff = Math.max(0, now - OFICIAL);
+    const s = Math.floor(diff / 1000);
+    setNum('d', fmtNum(s / 86400));
+    setNum('h', pad(Math.floor(s % 86400 / 3600)));
+    setNum('m', pad(Math.floor(s % 3600 / 60)));
+    setNum('s', pad(s % 60));
+    $('agora').textContent = fmtDataHora.format(now).replace(',', '');
+
+    const real = now - REAL;
+    const rs = real / 1000, rh = rs / 3600, rd = rh / 24;
+    const ad = anosDias(REAL, now);
+    $('realDelay').textContent =
+      `${ad.anos} ${ad.anos === 1 ? 'ano' : 'anos'} e ${ad.dias} ${ad.dias === 1 ? 'dia' : 'dias'}`;
+    $('realHoras').textContent = fmtNum(rh);
+    $('realSeg').textContent = fmtNum(rs);
+    const diasUteis = rd * 5 / 7;
+    $('eqCafe').textContent = fmtNum(diasUteis * 3);
+    $('eqSprint').textContent = (rd / 14).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
+    $('eqReuniao').textContent = fmtNum(diasUteis * 2.5);
+    $('eqSemana').textContent = fmtNum(rd / 7);
+    $('eqLua').textContent = fmtNum(rd / 29.53);
+    $('eqCusto').textContent = (rd * 3.47).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // Próxima entrega: sempre a próxima sexta-feira (claro)
+  (function () {
+    const d = new Date();
+    d.setDate(d.getDate() + ((5 - d.getDay() + 7) % 7 || 7));
+    $('proxEntrega').textContent = fmtData.format(d);
+  })();
+
+  // ---- Barra de loading travada ----
+  const msgs = [
+    'Compilando desculpas...', 'Aguardando aprovação do comitê...', 'Resolvendo conflito de merge de 2024...',
+    'Rodando testes (todos pulados)...', 'Esperando o outro time...', 'Reiniciando o roteador...',
+    'Estimando prazo com dado de 20 lados...', 'Quase lá™...', 'Atualizando planilha de status...'
+  ];
+  let mi = 0;
+  setInterval(() => {
+    mi = (mi + 1) % msgs.length;
+    $('loadmsg').textContent = msgs[mi];
+    $('loadpct').textContent = (Math.random() < .5 ? '99' : '98') + '%';
+  }, 2200);
+
+  // ---- Timeline ----
+  const eventos = [
+    ['15/10/2024', 'Data original de entrega. Todos confiantes. 🎉', 'Spoiler: não foi.'],
+    ['22/10/2024', '"Falta só um ajustezinho."', 'O ajustezinho tinha 47 subtarefas.'],
+    ['12/2024', '"Depois das festas a gente entrega."', 'Festas de qual ano, não foi especificado.'],
+    ['03/2025', '"Tá em homologação."', 'Homologação: lugar mágico onde o tempo não passa.'],
+    ['07/2025', '"Depende do outro time."', 'O outro time diz que depende deste time.'],
+    ['01/2026', '"Esse ano sai."', 'Tecnicamente ainda pode ser verdade. Por pouco.'],
+    ['15/10/2026', 'Novo prazo oficial! Agora vai! 💪', 'Não foi.'],
+    ['16/10/2026', '"Deploy na sexta? Melhor não."', 'Hoje. Agora. Enquanto você lê isso.']
+  ];
+  const tl = $('timeline');
+  eventos.forEach(([t, p, s]) => {
+    const div = document.createElement('div');
+    div.className = 'ev';
+    div.innerHTML = `<time>${t}</time><p>${p}</p><small>${s}</small>`;
+    tl.appendChild(div);
+  });
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add(e.target.id === 'dossie' ? 'x' : 'show');
+      if (e.target.id === 'dossie') setTimeout(() => $('stamp').classList.add('on'), 400);
+      io.unobserve(e.target);
+    });
+  }, { threshold: .25 });
+  document.querySelectorAll('.ev').forEach((el, i) => { el.style.transitionDelay = (i % 3) * 80 + 'ms'; io.observe(el); });
+  io.observe($('dossie'));
+
+  // ---- Anderson ----
+  const passos = ['Consultando RH...', 'Verificando crachá na catraca...', 'Checando se ainda tá no grupo do WhatsApp...', 'Conferindo cadeira dele...'];
+  function consultar() {
+    $('andStart').classList.add('hidden');
+    $('andResult').classList.add('hidden');
+    $('andPe').classList.remove('on');
+    $('andLoading').classList.remove('hidden');
+    let i = 0;
+    $('andStep').textContent = passos[0];
+    const iv = setInterval(() => { i++; if (i < passos.length) $('andStep').textContent = passos[i]; }, 650);
+    setTimeout(() => {
+      clearInterval(iv);
+      $('andLoading').classList.add('hidden');
+      $('andResult').classList.remove('hidden');
+      $('andData').textContent = fmtDataHora.format(new Date()).replace(',', '');
+      setTimeout(() => $('andPe').classList.add('on'), 900);
+    }, 2700);
+  }
+  $('andBtn').addEventListener('click', consultar);
+  $('andAgain').addEventListener('click', consultar);
+
+  // ---- Botão fujão ----
+  const fuga = $('fuga'), fujao = $('fujao');
+  let tentativas = 0;
+  const frases = ['Quase!', 'Semana que vem, talvez.', 'Precisa de mais uma reunião.', 'Bloqueado por dependência.', 'Tá em homologação.', 'Erro 418: sou um bule.'];
+  function fugir(e) {
+    e && e.preventDefault();
+    tentativas++;
+    const r = fuga.getBoundingClientRect();
+    const bw = fujao.offsetWidth, bh = fujao.offsetHeight;
+    const x = bw / 2 + Math.random() * Math.max(1, r.width - bw);
+    const y = bh / 2 + Math.random() * Math.max(1, r.height - bh - 30);
+    fujao.style.left = x + 'px';
+    fujao.style.top = y + 'px';
+    if (tentativas % 3 === 0) toast(frases[(tentativas / 3 - 1) % frases.length]);
+  }
+  fujao.addEventListener('mouseenter', fugir);
+  fujao.addEventListener('touchstart', fugir, { passive: false });
+  fujao.addEventListener('click', e => { fugir(e); toast('Você quase entregou. Igual ao time. 🫠'); });
+
+  // ---- Toast ----
+  let tt;
+  function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg; t.classList.add('on');
+    clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2400);
+  }
+
+  // ---- Easter egg logo ----
+  let cliques = 0;
+  $('logo').addEventListener('click', () => {
+    cliques++;
+    if (cliques >= 5) { cliques = 0; toast('Kerdos v0.0.1-alpha-final-FINAL2-agora-vai.zip'); chuva(30); }
+  });
+
+  // ---- Chuva de caracóis ----
+  function chuva(n) {
+    const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduz) return;
+    for (let i = 0; i < n; i++) {
+      setTimeout(() => {
+        const s = document.createElement('div');
+        s.className = 'snail';
+        s.textContent = Math.random() < .85 ? '🐌' : '🐢';
+        s.style.left = Math.random() * 100 + 'vw';
+        s.style.animationDuration = 3 + Math.random() * 4 + 's';
+        document.body.appendChild(s);
+        s.addEventListener('animationend', () => s.remove());
+      }, i * 120);
+    }
+  }
+  chuva(18);
+  setInterval(() => chuva(4), 15000);
+})();
+</script>
+</body>
+</html>
