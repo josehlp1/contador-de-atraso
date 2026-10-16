@@ -297,6 +297,62 @@
   .arrojo.broken .bar.boom i::after { content: "💥"; position: absolute; top: -26px; left: 50%; transform: translateX(-50%); font-size: 1.6rem; }
   .bar.boom i { position: relative; }
 
+  /* ---------- Bastidores ---------- */
+  .bast { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 16px; }
+  .bcard { background: var(--card); border: 2px solid var(--borda); border-radius: 18px; padding: 18px; position: relative; overflow: hidden; }
+  .bcard h3 { margin: 0 0 8px; font-size: 1.05rem; }
+  .bcard p { margin: 0 0 12px; color: var(--muted); }
+  .bcard small { color: var(--muted); display: block; margin-top: 10px; }
+  .queima { display: grid; gap: 8px; }
+  .queima div { display: flex; justify-content: space-between; gap: 8px; background: var(--bg); padding: 8px 12px; border-radius: 10px; }
+  .flame { color: var(--vermelho); animation: pulse 1s infinite; }
+  .fogo { display: flex; justify-content: space-around; font-size: 1.8rem; margin-top: 10px; }
+  .fogo i { font-style: normal; animation: chama .6s ease-in-out infinite alternate; }
+  .fogo i:nth-child(2n) { animation-delay: .2s; }
+  .fogo i:nth-child(3n) { animation-delay: .4s; }
+  @keyframes chama { to { transform: scale(1.3) translateY(-6px) rotate(6deg); } }
+  .chat { display: flex; flex-direction: column; gap: 8px; }
+  .msg { max-width: 85%; padding: 8px 12px; border-radius: 14px; font-size: .92rem; opacity: 0; transform: translateY(10px); transition: opacity .4s, transform .4s; }
+  .msg.on { opacity: 1; transform: none; }
+  .msg b { display: block; font-size: .72rem; opacity: .7; }
+  .msg.l { background: var(--bg); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .msg.r { background: var(--azul-claro); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .cov { margin-top: 12px; font-weight: 600; }
+  .cov b { color: var(--vermelho); font-family: Bungee, sans-serif; }
+  .scouter { background: linear-gradient(135deg, #0f3d1c, #0a2412); color: #b6ffb0; border-color: #1db954; }
+  .scouter small { color: #7fcf7a; }
+  .scouter-val { font-family: Bungee, sans-serif; font-size: clamp(2.4rem, 10vw, 3.6rem); text-align: center; color: #5dff5a; text-shadow: 0 0 14px #1db954; font-variant-numeric: tabular-nums; }
+  .scouter-msg { text-align: center; font-weight: 800; min-height: 1.4em; }
+  .scouter.over { animation: tremor .12s infinite; }
+  .bah-val { font-family: Bungee, sans-serif; font-size: clamp(2.4rem, 10vw, 3.6rem); text-align: center; color: var(--vermelho); }
+  .bah-bar { height: 22px; background: var(--borda); border-radius: 999px; position: relative; width: 83.33%; }
+  .bah-bar::after { content: "100%"; position: absolute; right: -2px; top: -18px; font-size: .65rem; font-weight: 800; color: var(--muted); border-right: 2px dashed var(--vermelho); height: 40px; padding-right: 4px; }
+  .bah-bar i { display: block; height: 100%; width: 0; border-radius: 999px; background: linear-gradient(90deg, var(--amarelo), var(--vermelho)); transition: width 3s cubic-bezier(.6,0,.4,1); }
+
+  /* ---------- Enquete ---------- */
+  .enquete { background: var(--card); border: 3px dashed var(--azul-claro); border-radius: 22px; padding: 26px 20px; }
+  .enquete label { display: block; font-weight: 600; margin-bottom: 14px; }
+  .enquete input { display: block; width: 100%; margin-top: 6px; padding: 12px 14px; border-radius: 12px; border: 2px solid var(--borda); background: var(--bg); color: var(--texto); font: inherit; }
+  .enquete fieldset { border: 0; padding: 0; margin: 0; display: flex; gap: 12px; flex-wrap: wrap; }
+  .enquete legend { font-weight: 800; margin-bottom: 12px; font-size: 1.1rem; }
+  .opt { flex: 1; min-width: 120px; }
+  .opt.nao { background: #e9e9ff; box-shadow: 0 5px 0 #a9a9d9; }
+  .pres { margin-top: 18px; padding: 14px; border-radius: 14px; background: #e7f9ec; color: #11602c; font-weight: 600; animation: pop .4s; }
+  body.shake { animation: tremor .1s 8; }
+  .erro-overlay { position: fixed; inset: 0; background: rgba(0,0,40,.55); display: grid; place-items: center; z-index: 100; padding: 16px; }
+  .erro-win {
+    width: min(460px, 100%); background: #ece9d8; color: #111; border: 2px solid #0a246a; border-radius: 8px 8px 4px 4px;
+    font-family: Tahoma, Verdana, sans-serif; box-shadow: 6px 6px 0 rgba(0,0,0,.4); animation: slam .35s cubic-bezier(.2,1.8,.4,1);
+  }
+  .erro-bar { background: linear-gradient(90deg, #0a246a, #3a6ea5); color: #fff; font-weight: 700; padding: 6px 8px; display: flex; justify-content: space-between; align-items: center; border-radius: 6px 6px 0 0; font-size: .9rem; }
+  .erro-x { background: #c0392b; color: #fff; border: 1px solid #fff; border-radius: 3px; cursor: pointer; font-weight: 700; }
+  .erro-body { display: flex; gap: 14px; padding: 16px; font-size: .9rem; }
+  .erro-body p { margin: 0 0 8px; }
+  .erro-ico { font-size: 2.4rem; }
+  .erro-tec { font-family: ui-monospace, Menlo, monospace; font-size: .72rem; color: #555; }
+  .erro-btns { display: flex; justify-content: flex-end; gap: 8px; padding: 0 16px 14px; }
+  .erro-b { font: inherit; padding: 4px 16px; border: 1px solid #003c74; border-radius: 3px; background: linear-gradient(#fff, #e3e3db); cursor: pointer; }
+
   footer { text-align: center; padding: 40px 16px 70px; color: var(--muted); font-size: .85rem; }
   footer img { width: 120px; opacity: .6; display: block; margin: 0 auto 12px; }
 
@@ -434,9 +490,72 @@
 
   <section>
     <div class="wrap">
+      <h2>🕵️ Bastidores do time</h2>
+      <p class="sub">Indicadores que não aparecem no Jira.</p>
+      <div class="bast">
+
+        <div class="bcard" id="cardLarissa">
+          <h3>🔥 Larissa: Departamento de Queimadas</h3>
+          <p>Especialista em queimar exclusivamente as pessoas boas do time. Precisão cirúrgica.</p>
+          <div class="queima">
+            <div><span>Pessoas boas queimadas</span><b class="flame">🔥 100%</b></div>
+            <div><span>Pessoas medianas</span><b>🧊 intactas</b></div>
+          </div>
+          <div class="fogo" aria-hidden="true"><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i><i>🔥</i></div>
+          <small>Corpo de Bombeiros já foi acionado. Não atendeu.</small>
+        </div>
+
+        <div class="bcard">
+          <h3>🧪 Sieg (gerente) × Testes unitários</h3>
+          <div class="chat" id="chat">
+            <div class="msg l"><b>Sieg</b>Pessoal, cadê os testes unitários?</div>
+            <div class="msg r"><b>Devs</b>O Jhonathas mandou não fazer.</div>
+            <div class="msg l"><b>Sieg</b>Mas o Jhonathas nem é mais techlead...</div>
+            <div class="msg r"><b>Devs</b>Exato. Ninguém revogou a ordem. 🫡</div>
+            <div class="msg l"><b>Sieg</b>...</div>
+          </div>
+          <div class="cov">Cobertura de testes: <b>0,0%</b> <small>(conforme orientação técnica)</small></div>
+        </div>
+
+        <div class="bcard scouter" id="cardJose">
+          <h3>🥊 Índice de Pau-no-Cuzisse do José</h3>
+          <div class="scouter-val" id="joseVal">0</div>
+          <div class="scouter-msg" id="joseMsg">Medindo...</div>
+          <small>Medido com scouter calibrado. O scouter explodiu logo depois.</small>
+        </div>
+
+        <div class="bcard" id="cardBahiano">
+          <h3>🏃 Chance do Bahiano largar o projeto</h3>
+          <div class="bah-val" id="bahVal">0%</div>
+          <div class="bah-bar"><i id="bahBar"></i></div>
+          <small>Margem de erro: +20 pontos (pra cima). Já foi visto pesquisando passagem pra Salvador.</small>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
       <h2>📜 Linha do tempo das desculpas</h2>
       <p class="sub">Registros históricos, com reconstituição artística.</p>
       <div class="timeline" id="timeline"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <form class="enquete" id="enquete" onsubmit="return false">
+        <h2>🗳️ Pesquisa de opinião</h2>
+        <p class="sub">Sua opinião é muito importante para nós (mentira).</p>
+        <label>Seu nome <input type="text" id="pNome" placeholder="Ex: Estagiário otimista" autocomplete="off"></label>
+        <fieldset>
+          <legend>Você acha que vão entregar o projeto?</legend>
+          <button type="button" class="btn opt" data-v="sim">✅ Sim</button>
+          <button type="button" class="btn opt nao" data-v="nao">❌ Não</button>
+        </fieldset>
+        <div class="pres hidden" id="pRes"></div>
+      </form>
     </div>
   </section>
 
@@ -485,6 +604,24 @@
 
 <div class="walker" aria-hidden="true">🐌</div>
 <div class="toast" id="toast"></div>
+
+<div class="erro-overlay hidden" id="erro" role="alertdialog" aria-modal="true" aria-labelledby="erroTit">
+  <div class="erro-win">
+    <div class="erro-bar"><span id="erroTit">Kerdos.exe — Erro fatal</span><button type="button" class="erro-x" data-fechar>✕</button></div>
+    <div class="erro-body">
+      <div class="erro-ico">⛔</div>
+      <div>
+        <p><b>ERRO 0xKERD05: ENTREGA_IMPOSSIVEL</b></p>
+        <p id="erroMsg">Foi detectado otimismo não autorizado. A operação "acreditar na entrega" não é suportada neste universo.</p>
+        <p class="erro-tec">Stack trace: esperanca.js:1 → prazo.ts:404 → realidade.java:NullPointerException</p>
+      </div>
+    </div>
+    <div class="erro-btns">
+      <button type="button" class="erro-b" data-fechar>OK, eu aceito</button>
+      <button type="button" class="erro-b" data-fechar>Chorar</button>
+    </div>
+  </div>
+</div>
 
 <script>
 (function () {
@@ -624,6 +761,58 @@
     })(t0);
   }, { threshold: .4 });
   ioA.observe(arrojo);
+
+  // ---- Bastidores ----
+  function quandoVisivel(el, fn) {
+    const o = new IntersectionObserver(es => { if (es[0].isIntersecting) { o.disconnect(); fn(); } }, { threshold: .4 });
+    o.observe(el);
+  }
+  quandoVisivel($('chat'), () => {
+    document.querySelectorAll('#chat .msg').forEach((m, i) => setTimeout(() => m.classList.add('on'), i * 1100));
+  });
+  quandoVisivel($('cardJose'), () => {
+    const t0 = performance.now();
+    $('joseMsg').textContent = 'Medindo...';
+    (function anim(t) {
+      const p = Math.min(1, (t - t0) / 3000);
+      const v = Math.round(Math.pow(p, 2.2) * 8001);
+      $('joseVal').textContent = v.toLocaleString('pt-BR');
+      if (p < 1) return requestAnimationFrame(anim);
+      $('joseVal').textContent = '+8.000';
+      $('joseMsg').textContent = 'É MAIS DE 8.000!!! 😱';
+      $('cardJose').classList.add('over');
+      setTimeout(() => $('cardJose').classList.remove('over'), 1500);
+    })(t0);
+  });
+  quandoVisivel($('cardBahiano'), () => {
+    $('bahBar').style.width = '120%';
+    const t0 = performance.now();
+    (function anim(t) {
+      const p = Math.min(1, (t - t0) / 3000);
+      $('bahVal').textContent = Math.round(p * 120) + '%';
+      if (p < 1) requestAnimationFrame(anim);
+    })(t0);
+  });
+
+  // ---- Enquete ----
+  const nomeVotante = () => $('pNome').value.trim() || 'Pessoa anônima';
+  const erro = $('erro');
+  function fecharErro() { erro.classList.add('hidden'); toast('Erro persistido no log de desilusões.'); }
+  erro.querySelectorAll('[data-fechar]').forEach(b => b.addEventListener('click', fecharErro));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !erro.classList.contains('hidden')) fecharErro(); });
+  document.querySelectorAll('#enquete .opt').forEach(b => b.addEventListener('click', () => {
+    if (b.dataset.v === 'sim') {
+      $('pRes').classList.add('hidden');
+      $('erroMsg').textContent = `Foi detectado otimismo não autorizado vindo de "${nomeVotante()}". A operação "acreditar na entrega" não é suportada neste universo.`;
+      erro.classList.remove('hidden');
+      erro.querySelector('.erro-b').focus();
+      document.body.classList.remove('shake'); void document.body.offsetWidth; document.body.classList.add('shake');
+      chuva(20);
+    } else {
+      $('pRes').textContent = `✅ Resposta registrada, ${nomeVotante()}! Você e 99,7% dos votantes têm noção da realidade. Os outros 0,3% estão em homologação.`;
+      $('pRes').classList.remove('hidden');
+    }
+  }));
 
   // ---- Timeline ----
   const eventos = [
