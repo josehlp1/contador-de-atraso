@@ -261,6 +261,10 @@
   .wr-stats b { display: block; font-family: Bungee, sans-serif; font-size: 1.4rem; color: var(--amarelo); }
   .wr-log { margin-top: 16px; font-family: ui-monospace, Menlo, monospace; font-size: .8rem; color: #7dff9a; min-height: 4.5em; }
   .wr-log div { animation: fadein .4s; }
+  .wr-quote { margin-top: 18px; background: rgba(255,201,40,.08); border-left: 4px solid var(--amarelo); border-radius: 8px; padding: 12px 14px; }
+  .wr-quote small { color: #c9c9d6; }
+  .wr-frase { font-family: Bungee, sans-serif; font-size: clamp(1.2rem, 4.5vw, 1.9rem); color: var(--amarelo); min-height: 1.3em; margin-top: 4px; }
+  .cursor { animation: blink .8s steps(2) infinite; }
   @keyframes fadein { from { opacity: 0; transform: translateY(6px); } }
 
   /* ---------- Arrojo ---------- */
@@ -436,12 +440,16 @@
         <p class="wr-sub">Sala trancada desde <b id="wrInicio">15/10/2026 20:40</b>. Ninguém entra, ninguém sai, ninguém entrega.</p>
         <div class="wr-clock" id="wrClock">14:00:00</div>
         <div class="wr-stats">
-          <div><b id="wrPizza">—</b>pizzas consumidas</div>
+          <div><b id="wrAmeaca">—</b>ameaças de demissão</div>
           <div><b id="wrCafe">—</b>litros de café</div>
           <div><b id="wrEnerg">—</b>energéticos</div>
           <div><b id="wrMsg">—</b>"alguém tá vendo isso?" no chat</div>
           <div><b>2</b>câmeras ligadas</div>
           <div><b id="wrSono">0</b>horas de sono</div>
+        </div>
+        <div class="wr-quote">
+          <small>🎙️ Frase mais ouvida na sala agora:</small>
+          <div class="wr-frase">“<span id="wrFrase"></span><span class="cursor">|</span>”</div>
         </div>
         <div class="wr-log" id="wrLog"></div>
       </div>
@@ -713,7 +721,8 @@
   $('wrInicio').textContent = fmtDataHora.format(WR).replace(',', '').slice(0, 16);
   const logs = [
     '[INFO] Reunião iniciada para decidir horário da próxima reunião',
-    '[WARN] Pizza de calabresa acabou',
+    '[WARN] Nova ameaça de demissão registrada',
+    '[INFO] Alguém disse "vai melhorar" pela 12ª vez',
     '[ERRO] Deploy falhou: "funciona na minha máquina"',
     '[INFO] Alguém sugeriu "e se a gente reiniciar?"',
     '[WARN] Café em nível crítico',
@@ -732,12 +741,26 @@
     while (box.children.length > 3) box.lastChild.remove();
   }
   addLog(); setInterval(addLog, 3500);
+
+  // Frases típicas, digitadas tipo máquina de escrever
+  const frasesWr = ['Vai melhorar.', 'Ano que vem melhora.', 'Isso deveria estar pronto.', 'Quem aprovou isso?', 'Não é possível que ainda não tá pronto.', 'Amanhã cedo a gente vê.'];
+  let fi = 0;
+  function digitar() {
+    const alvo = frasesWr[fi++ % frasesWr.length], el = $('wrFrase');
+    let i = 0;
+    el.textContent = '';
+    const iv = setInterval(() => {
+      el.textContent = alvo.slice(0, ++i);
+      if (i >= alvo.length) { clearInterval(iv); setTimeout(digitar, 2200); }
+    }, 55);
+  }
+  digitar();
   function wrTick() {
     const s = Math.max(0, Math.floor((Date.now() - WR) / 1000));
     const h = Math.floor(s / 3600);
     $('wrClock').textContent = `${String(h).padStart(2, '0')}:${pad(Math.floor(s % 3600 / 60))}:${pad(s % 60)}`;
     const hrs = s / 3600;
-    $('wrPizza').textContent = fmtNum(hrs * 1.5);
+    $('wrAmeaca').textContent = fmtNum(hrs * 0.9);
     $('wrCafe').textContent = (hrs * 1.8).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
     $('wrEnerg').textContent = fmtNum(hrs * 2.3);
     $('wrMsg').textContent = fmtNum(s / 240);
