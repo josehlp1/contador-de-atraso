@@ -369,6 +369,16 @@
   .grito.on { transform: scale(1) rotate(-3deg); animation: tremor .15s .35s 4; }
   .grito-ico { font-size: 1.6rem; }
 
+  /* ---------- Call + som ---------- */
+  .wr-call { margin-top: 8px; display: inline-flex; gap: 6px; align-items: center; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 999px; padding: 6px 14px; font-size: .9rem; }
+  .wr-call span { color: #c9c9d6; }
+  .wr-call b { color: #fff; animation: fadein .4s; }
+  .som {
+    position: fixed; left: 16px; bottom: 56px; z-index: 70; font: 800 .85rem Inter, sans-serif; cursor: pointer;
+    background: var(--azul); color: #fff; border: 2px solid #fff; border-radius: 999px; padding: 10px 16px; box-shadow: 0 4px 14px rgba(0,0,0,.3);
+  }
+  .som[aria-pressed="true"] { background: var(--vermelho); animation: pulse 1.2s infinite; }
+
   footer { text-align: center; padding: 40px 16px 70px; color: var(--muted); font-size: .85rem; }
   footer img { width: 120px; opacity: .6; display: block; margin: 0 auto 12px; }
 
@@ -451,6 +461,7 @@
     <div class="wrap">
       <div class="warroom">
         <div class="wr-head"><span class="rec"></span> AO VIVO · WAR ROOM</div>
+        <div class="wr-call">📞 <span>Na call:</span> <b id="wrCall">“Lari tá aí?”</b></div>
         <h2>🔥 Tempo de war room</h2>
         <p class="wr-sub">Sala trancada desde <b id="wrInicio">15/10/2026 20:40</b>. Ninguém entra, ninguém sai, ninguém entrega.</p>
         <div class="wr-clock" id="wrClock">14:00:00</div>
@@ -627,6 +638,8 @@
 </footer>
 
 <div class="walker" aria-hidden="true">🐌</div>
+<button type="button" class="som" id="som" aria-pressed="false">🔇 Ligar som</button>
+<audio id="audio" src="assets/fundo.mp3" loop preload="auto"></audio>
 <div class="grito" id="grito" aria-live="polite"><span class="grito-ico">🗣️</span><span id="gritoTxt"></span></div>
 <div class="toast" id="toast"></div>
 
@@ -738,6 +751,9 @@
   $('wrInicio').textContent = fmtDataHora.format(WR).replace(',', '').slice(0, 16);
   const logs = [
     '[INFO] Reunião iniciada para decidir horário da próxima reunião',
+    '[CALL] "Lari tá aí?" (sem resposta)',
+    '[CALL] "Kleber tá aí?" (microfone mutado)',
+    '[CALL] "Tão vendo minha tela?" (não estavam)',
     '[WARN] Nova ameaça de demissão registrada',
     '[INFO] Alguém disse "vai melhorar" pela 12ª vez',
     '[ERRO] Deploy falhou: "funciona na minha máquina"',
@@ -762,7 +778,7 @@
   addLog(); setInterval(addLog, 3500);
 
   // Frases típicas, digitadas tipo máquina de escrever
-  const frasesWr = ['Vai melhorar.', 'Ano que vem melhora.', 'Isso deveria estar pronto.', 'Quem aprovou isso?', 'Não é possível que ainda não tá pronto.', 'Amanhã cedo a gente vê.'];
+  const frasesWr = ['Vai melhorar.', 'Ano que vem melhora.', 'Isso deveria estar pronto.', 'Quem aprovou isso?', 'Não é possível que ainda não tá pronto.', 'Amanhã cedo a gente vê.', 'Sendo assim, prefiro não.', 'Ai, paremo.'];
   let fi = 0;
   function digitar() {
     const alvo = frasesWr[fi++ % frasesWr.length], el = $('wrFrase');
@@ -940,8 +956,40 @@
     if (cliques >= 5) { cliques = 0; toast('Kerdos v0.0.1-alpha-final-FINAL2-agora-vai.zip'); chuva(30); }
   });
 
+  // ---- Call ao vivo ----
+  const falasCall = ['“Lari tá aí?”', '“Kleber tá aí?”', '“Tão vendo minha tela?”', '“Lari tá aí?” (de novo)', '“Kleber? Kleber??”', '“Agora tão vendo minha tela?”'];
+  let ci = 0;
+  setInterval(() => {
+    const b = $('wrCall');
+    b.textContent = falasCall[++ci % falasCall.length];
+    b.style.animation = 'none'; void b.offsetWidth; b.style.animation = '';
+  }, 2800);
+
+  // ---- Som de fundo (autoplay só depois da primeira interação) ----
+  const audio = $('audio'), som = $('som');
+  audio.volume = .6;
+  let somDesligadoPeloUsuario = false;
+  function atualizaSom() {
+    const tocando = !audio.paused;
+    som.setAttribute('aria-pressed', tocando);
+    som.textContent = tocando ? '🔊 Som ligado' : '🔇 Ligar som';
+  }
+  audio.addEventListener('play', atualizaSom);
+  audio.addEventListener('pause', atualizaSom);
+  som.addEventListener('click', e => {
+    e.stopPropagation();
+    if (audio.paused) { somDesligadoPeloUsuario = false; audio.play().catch(() => {}); }
+    else { somDesligadoPeloUsuario = true; audio.pause(); }
+  });
+  function tentaTocar() {
+    if (somDesligadoPeloUsuario || !audio.paused) return;
+    audio.play().catch(() => {});
+  }
+  tentaTocar();
+  ['pointerdown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, tentaTocar, { passive: true }));
+
   // ---- Gritos aleatórios ----
-  const gritos = ['MAS TAMBÉM COM ESSA CARA DE PUTA!', 'O PROBLEMA VAI SER O TESTE.', 'ERRO DO BÉQUI!', 'ISSO DEVERIA ESTAR PRONTO!'];
+  const gritos = ['MAS TAMBÉM COM ESSA CARA DE PUTA!', 'O PROBLEMA VAI SER O TESTE.', 'ERRO DO BÉQUI!', 'ISSO DEVERIA ESTAR PRONTO!', 'SENDO ASSIM, PREFIRO NÃO.', 'AI, PAREMO.'];
   let gi = 0;
   function gritar() {
     $('gritoTxt').textContent = gritos[gi++ % gritos.length];
