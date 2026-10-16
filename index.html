@@ -357,6 +357,18 @@
   .erro-btns { display: flex; justify-content: flex-end; gap: 8px; padding: 0 16px 14px; }
   .erro-b { font: inherit; padding: 4px 16px; border: 1px solid #003c74; border-radius: 3px; background: linear-gradient(#fff, #e3e3db); cursor: pointer; }
 
+  /* ---------- Grito ---------- */
+  .grito {
+    position: fixed; right: 16px; bottom: 110px; z-index: 55; max-width: min(320px, calc(100vw - 32px));
+    background: #fff; color: #111; border: 3px solid #111; border-radius: 18px; padding: 10px 14px;
+    font-family: Bungee, sans-serif; font-size: .95rem; line-height: 1.2; display: flex; gap: 8px; align-items: center;
+    box-shadow: 5px 5px 0 #111; transform: scale(0) rotate(-8deg); transform-origin: bottom right; transition: transform .35s cubic-bezier(.2,1.8,.4,1);
+    pointer-events: none;
+  }
+  .grito::after { content: ""; position: absolute; right: 22px; bottom: -14px; border: 10px solid transparent; border-top-color: #111; }
+  .grito.on { transform: scale(1) rotate(-3deg); animation: tremor .15s .35s 4; }
+  .grito-ico { font-size: 1.6rem; }
+
   footer { text-align: center; padding: 40px 16px 70px; color: var(--muted); font-size: .85rem; }
   footer img { width: 120px; opacity: .6; display: block; margin: 0 auto 12px; }
 
@@ -365,6 +377,7 @@
     background: var(--texto); color: var(--bg); padding: 12px 18px; border-radius: 12px; font-weight: 600;
     transition: transform .4s cubic-bezier(.2,1.5,.4,1); z-index: 60; max-width: calc(100vw - 32px); text-align: center;
   }
+  .toast:not(.on) { opacity: 0; visibility: hidden; }
   .toast.on { transform: translateX(-50%) translateY(0); }
 
   @media (max-width: 560px) {
@@ -384,6 +397,8 @@
   🚨 URGENTE: Kerdos segue "quase pronto" &nbsp;•&nbsp; Fontes confirmam: "falta só um detalhezinho" &nbsp;•&nbsp;
   Meteorologia prevê entrega com 0% de chance nesta semana &nbsp;•&nbsp; Reunião de alinhamento sobre a reunião de alinhamento marcada para amanhã &nbsp;•&nbsp;
   🐌 Caracol bate recorde e chega antes do Kerdos &nbsp;•&nbsp;
+  🗣️ Ouvido no corredor: "MAS TAMBÉM COM ESSA CARA DE PUTA!" &nbsp;•&nbsp;
+  ⚠️ Previsão técnica: "o problema vai ser o teste" &nbsp;•&nbsp;
 </span></div>
 
 <header class="hero">
@@ -520,6 +535,7 @@
             <div class="msg r"><b>Devs</b>O Jhonathas mandou não fazer.</div>
             <div class="msg l"><b>Sieg</b>Mas o Jhonathas nem é mais techlead...</div>
             <div class="msg r"><b>Devs</b>Exato. Ninguém revogou a ordem. 🫡</div>
+            <div class="msg r"><b>Devs</b>E outra: o problema vai ser o teste.</div>
             <div class="msg l"><b>Sieg</b>...</div>
           </div>
           <div class="cov">Cobertura de testes: <b>0,0%</b> <small>(conforme orientação técnica)</small></div>
@@ -611,6 +627,7 @@
 </footer>
 
 <div class="walker" aria-hidden="true">🐌</div>
+<div class="grito" id="grito" aria-live="polite"><span class="grito-ico">🗣️</span><span id="gritoTxt"></span></div>
 <div class="toast" id="toast"></div>
 
 <div class="erro-overlay hidden" id="erro" role="alertdialog" aria-modal="true" aria-labelledby="erroTit">
@@ -621,7 +638,7 @@
       <div>
         <p><b>ERRO 0xKERD05: ENTREGA_IMPOSSIVEL</b></p>
         <p id="erroMsg">Foi detectado otimismo não autorizado. A operação "acreditar na entrega" não é suportada neste universo.</p>
-        <p class="erro-tec">Stack trace: esperanca.js:1 → prazo.ts:404 → realidade.java:NullPointerException</p>
+        <p class="erro-tec">Stack trace: esperanca.js:1 → prazo.ts:404 → realidade.java:NullPointerException<br>Diagnóstico: erro bo béqui.</p>
       </div>
     </div>
     <div class="erro-btns">
@@ -728,6 +745,8 @@
     '[WARN] Café em nível crítico',
     '[INFO] Gerente perguntou "e aí, como tá?" (pela 37ª vez)',
     '[ERRO] Rollback do rollback em andamento',
+    '[ERRO] Erro bo béqui. De novo.',
+    '[WARN] O problema vai ser o teste (previsão confirmada)',
     '[INFO] Plano B descartado. Plano C também. Iniciando Plano K(erdos)',
     '[WARN] Ar-condicionado em 16°C, moral em 3°C',
     '[INFO] "Só mais 5 minutinhos" — há 6 horas'
@@ -920,6 +939,17 @@
     cliques++;
     if (cliques >= 5) { cliques = 0; toast('Kerdos v0.0.1-alpha-final-FINAL2-agora-vai.zip'); chuva(30); }
   });
+
+  // ---- Gritos aleatórios ----
+  const gritos = ['MAS TAMBÉM COM ESSA CARA DE PUTA!', 'O PROBLEMA VAI SER O TESTE.', 'ERRO BO BÉQUI!', 'ISSO DEVERIA ESTAR PRONTO!'];
+  let gi = 0;
+  function gritar() {
+    $('gritoTxt').textContent = gritos[gi++ % gritos.length];
+    $('grito').classList.add('on');
+    setTimeout(() => $('grito').classList.remove('on'), 3500);
+  }
+  setTimeout(gritar, 6000);
+  setInterval(gritar, 14000);
 
   // ---- Chuva de caracóis ----
   function chuva(n) {
