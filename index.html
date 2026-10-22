@@ -29,6 +29,8 @@
       --muted: #a7a9d6;
       --borda: #2b2d6e;
     }
+    .prazos li.atual { border-color: var(--amarelo); }
+    .prazos li.atual b, .kicker { color: var(--amarelo); }
   }
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; overflow-x: clip; }
@@ -37,12 +39,86 @@
     font-family: Inter, system-ui, sans-serif;
     background: var(--bg);
     color: var(--texto);
-    overflow-x: hidden;
+    overflow-x: clip;
   }
   .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
-  section { padding: 56px 0; }
+  section { padding: 44px 0; scroll-margin-top: 56px; }
   h2 { font-family: Bungee, sans-serif; font-weight: 400; font-size: clamp(1.5rem, 4vw, 2.3rem); margin: 0 0 12px; }
   .sub { color: var(--muted); margin: 0 0 28px; }
+  .kicker { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--azul-claro); background: color-mix(in srgb, var(--azul-claro) 12%, transparent); padding: 4px 10px; border-radius: 999px; margin-bottom: 8px; }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    position: sticky; top: 0; z-index: 80; background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--borda);
+  }
+  .nav .wrap { display: flex; align-items: center; gap: 8px; height: 52px; }
+  .nav-links { display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none; flex: 1; mask-image: linear-gradient(90deg, #000 90%, transparent); }
+  .nav-links::-webkit-scrollbar { display: none; }
+  .nav-links a {
+    flex-shrink: 0; text-decoration: none; color: var(--texto); font-weight: 600; font-size: .85rem;
+    padding: 6px 10px; border-radius: 999px; border: 1px solid var(--borda); background: var(--card); transition: background .2s, color .2s;
+  }
+  .nav-links a:hover, .nav-links a.ativo { background: var(--azul); color: #fff; border-color: var(--azul); }
+  .som {
+    flex-shrink: 0; font: 800 .8rem Inter, sans-serif; cursor: pointer;
+    background: var(--azul); color: #fff; border: 0; border-radius: 999px; padding: 8px 14px;
+  }
+  .som[aria-pressed="true"] { background: var(--vermelho); animation: pulse 1.2s infinite; }
+
+  /* ---------- KPIs do hero ---------- */
+  .status-chip { display: inline-flex; gap: 6px; align-items: center; background: rgba(255,201,40,.15); border: 1px solid var(--amarelo); color: var(--amarelo); font-weight: 800; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px; margin-top: 18px; }
+  .status-chip i { width: 8px; height: 8px; border-radius: 50%; background: var(--amarelo); animation: blink 1s steps(2) infinite; }
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 720px; margin: 28px auto 0; }
+  .kpis div { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 14px; padding: 12px 8px; font-size: .78rem; opacity: .95; }
+  .kpis b { display: block; font-family: Bungee, sans-serif; font-weight: 400; font-size: clamp(1.3rem, 4.5vw, 1.9rem); color: var(--amarelo); font-variant-numeric: tabular-nums; }
+  .btn-share { margin-top: 24px; }
+
+  /* ---------- Go-live ---------- */
+  .golive { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; }
+  .prazos { background: var(--card); border: 2px solid var(--borda); border-radius: 18px; padding: 18px; position: relative; overflow: hidden; }
+  .prazos ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .prazos li { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; padding: 10px 12px; border-radius: 10px; background: var(--bg); }
+  .prazos li s { white-space: nowrap; color: var(--muted); text-decoration-color: var(--vermelho); text-decoration-thickness: 3px; font-weight: 800; }
+  .prazos li small { color: var(--muted); text-align: right; }
+  .prazos li.atual { border: 2px dashed var(--azul-claro); }
+  .prazos li.atual b { color: var(--azul-claro); }
+  .prazos .stamp { top: 40%; right: 8px; }
+  .gl-count { background: var(--azul); color: #fff; border-radius: 18px; padding: 20px; text-align: center; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 6px 0 var(--vermelho); }
+  .gl-count small { opacity: .8; }
+  .gl-clock { font-family: Bungee, sans-serif; font-size: clamp(1.8rem, 7vw, 2.8rem); color: var(--amarelo); font-variant-numeric: tabular-nums; margin: 8px 0; line-height: 1.1; }
+  .gl-adia { margin-top: 10px; font-weight: 800; }
+  .gl-adia b { font-family: Bungee, sans-serif; color: var(--amarelo); font-size: 1.4rem; }
+
+  /* ---------- Vendas + churrasco ---------- */
+  .placar { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; align-items: center; text-align: center; margin-bottom: 10px; }
+  .placar b { display: block; font-family: Bungee, sans-serif; font-size: clamp(2.6rem, 10vw, 3.6rem); line-height: 1; }
+  .placar .prod b { color: var(--vermelho); }
+  .placar .homo b { color: #1db954; }
+  .placar span { font-size: .8rem; color: var(--muted); font-weight: 600; }
+  .placar .x { font-family: Bungee, sans-serif; color: var(--muted); font-size: 1.4rem; }
+  .grelha { display: grid; gap: 6px; margin-top: 10px; }
+  .grelha div { display: flex; justify-content: space-between; gap: 8px; background: var(--bg); padding: 8px 12px; border-radius: 10px; font-size: .9rem; }
+  .termo { height: 14px; background: var(--borda); border-radius: 999px; margin-top: 12px; overflow: hidden; }
+  .termo i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--amarelo), #ff8a00); border-radius: 999px; transition: width 2.5s cubic-bezier(.6,0,.4,1); }
+
+  /* ---------- Release notes ---------- */
+  .bcard.rn { background: #0f1117; color: #d7dae0; border-color: #2b2f3a; font-family: ui-monospace, Menlo, monospace; font-size: .82rem; }
+  .bcard.rn h3 { font-family: Inter, sans-serif; color: #fff; }
+  .rn ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .rn li { line-height: 1.4; }
+  .rn .tag { display: inline-block; font-weight: 800; font-size: .68rem; padding: 1px 6px; border-radius: 4px; margin-right: 6px; }
+  .tag.fix { background: #1db954; color: #04210f; }
+  .tag.bug { background: var(--vermelho); color: #fff; }
+  .tag.feat { background: var(--azul-claro); color: #fff; }
+  .tag.infra { background: var(--amarelo); color: #1a1a1a; }
+  .bcard.rn small { color: #8b90a0; display: block; margin-top: 2px; }
+
+  /* ---------- Devia tá pronto ---------- */
+  .bcard.devia { background: var(--amarelo); color: #1a1a1a; border-color: #b38600; }
+  .bcard.devia p, .bcard.devia small { color: #3d3000; }
+  .devia-val { font-family: Bungee, sans-serif; font-size: clamp(2.6rem, 11vw, 3.8rem); text-align: center; line-height: 1; font-variant-numeric: tabular-nums; }
+  .devia-val.pop { animation: pop .35s ease-out; }
 
   /* ---------- Hero ---------- */
   .hero {
@@ -373,11 +449,6 @@
   .wr-call { margin-top: 8px; display: inline-flex; gap: 6px; align-items: center; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 999px; padding: 6px 14px; font-size: .9rem; }
   .wr-call span { color: #c9c9d6; }
   .wr-call b { color: #fff; animation: fadein .4s; }
-  .som {
-    position: fixed; left: 16px; bottom: 56px; z-index: 70; font: 800 .85rem Inter, sans-serif; cursor: pointer;
-    background: var(--azul); color: #fff; border: 2px solid #fff; border-radius: 999px; padding: 10px 16px; box-shadow: 0 4px 14px rgba(0,0,0,.3);
-  }
-  .som[aria-pressed="true"] { background: var(--vermelho); animation: pulse 1.2s infinite; }
 
   footer { text-align: center; padding: 40px 16px 70px; color: var(--muted); font-size: .85rem; }
   footer img { width: 120px; opacity: .6; display: block; margin: 0 auto 12px; }
@@ -392,6 +463,9 @@
 
   @media (max-width: 560px) {
     .counter { grid-template-columns: repeat(2, 1fr); }
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .golive { grid-template-columns: 1fr; }
+    .som .som-txt { display: none; }
     .dossie { transform: none; padding: 48px 16px 24px; }
     .arrojo { grid-template-columns: 1fr; padding-top: 0; }
     .chart { margin-top: 200px; }
@@ -409,22 +483,52 @@
   🐌 Caracol bate recorde e chega antes do Kerdos &nbsp;•&nbsp;
   🗣️ Ouvido no corredor: "MAS TAMBÉM COM ESSA CARA DE PUTA!" &nbsp;•&nbsp;
   ⚠️ Previsão técnica: "o problema vai ser o teste" &nbsp;•&nbsp;
+  📅 Go-live das 14h adiado pra segunda. Fontes: "confia" &nbsp;•&nbsp;
+  🎉 Primeira venda do Kerdos é realizada com sucesso (em homologação) &nbsp;•&nbsp;
+  🔇 War room bate recorde de microfones fechados &nbsp;•&nbsp;
+  ⏳ Kerdos em produção: "Aguardando por essa mensagem. Essa ação pode levar alguns instantes." &nbsp;•&nbsp;
+  🥩 Picanha segue na geladeira aguardando a primeira venda &nbsp;•&nbsp;
 </span></div>
+
+<nav class="nav" aria-label="Seções">
+  <div class="wrap">
+    <div class="nav-links">
+      <a href="#contador">⏱️ Contador</a>
+      <a href="#golive">🚀 Go-live</a>
+      <a href="#warroom">🔥 War room</a>
+      <a href="#vendas">🥩 Vendas</a>
+      <a href="#arrojo-sec">📈 Arrojo</a>
+      <a href="#bastidores">🕵️ Bastidores</a>
+      <a href="#linha">📜 Timeline</a>
+      <a href="#anderson">🤔 Anderson</a>
+    </div>
+    <button type="button" class="som" id="som" aria-pressed="false">🔇 <span class="som-txt">Ligar som</span></button>
+  </div>
+</nav>
 
 <header class="hero">
   <div class="wrap">
     <img class="logo" id="logo" src="assets/unifique-logo-white.svg" alt="Logo Unifique">
     <div class="presents">apresenta, com orgulho e atraso</div>
     <h1>KERDOS<sup>™</sup></h1>
-    <p class="prevista">Entrega prevista: <b>Em Breve™</b></p>
+    <div class="status-chip"><i></i> Status: em homologação</div>
+    <p class="prevista">Entrega prevista: <b>Segunda™</b> <small>(qual segunda, não foi especificado)</small></p>
     <div class="loadbar" aria-label="Progresso do deploy"><i></i><em id="loadpct">99%</em></div>
     <div class="loadmsg" id="loadmsg">Compilando desculpas...</div>
+    <div class="kpis">
+      <div><b id="kDias">—</b>dias de atraso</div>
+      <div><b id="kAdia">—</b>go-lives adiados</div>
+      <div><b>0</b>vendas em produção</div>
+      <div><b id="kWr">—</b>horas de war room</div>
+    </div>
+    <button type="button" class="btn btn-share" id="share">📋 Copiar boletim pro grupo</button>
   </div>
 </header>
 
 <main>
-  <section>
+  <section id="contador">
     <div class="wrap">
+      <span class="kicker">Ao vivo</span>
       <h2>⏱️ Contador oficial de atraso</h2>
       <p class="sub">Prazo combinado: <b id="dataOficial">15/10/2026</b>. Desde então, o relógio não para (ao contrário do projeto).</p>
       <div class="counter" id="c1">
@@ -437,12 +541,37 @@
     </div>
   </section>
 
+  <section id="golive">
+    <div class="wrap">
+      <span class="kicker">Calendário oficial</span>
+      <h2>🚀 Go-live</h2>
+      <p class="sub">Histórico de datas definitivas. Todas elas.</p>
+      <div class="golive">
+        <div class="prazos" id="prazos">
+          <div class="stamp" id="stampGl">ADIADO</div>
+          <ol>
+            <li><s>15/10</s><small>Deadline. "Hoje é o dia, the day of the glory."</small></li>
+            <li><s>21/10</s><small>A finaleira. Os 45 do segundo tempo.</small></li>
+            <li><s>22/10 · 14:00</s><small>Go-live com link e tudo. Adiado às 17h.</small></li>
+            <li class="atual"><b id="glAlvoTxt">Segunda, 26/10</b><small>Agora vai™</small></li>
+          </ol>
+        </div>
+        <div class="gl-count">
+          <small id="glLbl">Contagem regressiva pro próximo go-live</small>
+          <div class="gl-clock" id="glClock">--d --:--:--</div>
+          <small>Probabilidade de acontecer: <b>calculando...</b></small>
+          <div class="gl-adia"><b id="glAdia">3</b> adiamentos e contando</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section>
     <div class="wrap">
       <div class="dossie" id="dossie">
         <div class="stamp" id="stamp">CONFIDENCIAL</div>
         <h2>📁 O atraso de verdade</h2>
-        <p>Documento interno vazado revela que a entrega <span class="redact">██████</span> deveria ter acontecido em <b id="dataReal">15/10/2024</b>. Ou seja, o "1 dia de atraso" acima é, digamos, uma <i>estimativa otimista</i>.</p>
+        <p>Documento interno vazado revela que a entrega <span class="redact">██████</span> deveria ter acontecido em <b id="dataReal">15/10/2024</b>. Ou seja, os "poucos dias de atraso" acima são, digamos, uma <i>estimativa otimista</i>.</p>
         <div class="bigdelay" id="realDelay">— anos, — dias</div>
         <p>Total: <b id="realHoras">—</b> horas. Ou <b id="realSeg">—</b> segundos, se você quiser chorar com mais precisão.</p>
         <div class="equiv">
@@ -457,21 +586,23 @@
     </div>
   </section>
 
-  <section>
+  <section id="warroom">
     <div class="wrap">
       <div class="warroom">
         <div class="wr-head"><span class="rec"></span> AO VIVO · WAR ROOM</div>
         <div class="wr-call">📞 <span>Na call:</span> <b id="wrCall">“Lari tá aí?”</b></div>
         <h2>🔥 Tempo de war room</h2>
-        <p class="wr-sub">Sala trancada desde <b id="wrInicio">15/10/2026 20:40</b>. Ninguém entra, ninguém sai, ninguém entrega.</p>
+        <p class="wr-sub">Sala trancada desde <b id="wrInicio">15/10/2026 20:40</b>. Remoto, mas presencial: ninguém sai da call, todo mundo de mic fechado, ninguém entrega.</p>
         <div class="wr-clock" id="wrClock">14:00:00</div>
         <div class="wr-stats">
           <div><b id="wrAmeaca">—</b>ameaças de demissão</div>
           <div><b id="wrCafe">—</b>litros de café</div>
           <div><b id="wrEnerg">—</b>energéticos</div>
           <div><b id="wrMsg">—</b>"alguém tá vendo isso?" no chat</div>
-          <div><b>2</b>câmeras ligadas</div>
+          <div><b>0</b>microfones abertos</div>
           <div><b id="wrSono">0</b>horas de sono</div>
+          <div><b id="wrDias">—</b>dias seguidos de call</div>
+          <div><b>3h</b>horário de saída na finaleira</div>
         </div>
         <div class="wr-quote">
           <small>🎙️ Frase mais ouvida na sala agora:</small>
@@ -482,8 +613,39 @@
     </div>
   </section>
 
-  <section>
+  <section id="vendas">
     <div class="wrap">
+      <span class="kicker">Resultados do negócio</span>
+      <h2>🥩 Placar de vendas</h2>
+      <p class="sub">A primeira venda saiu! Em homologação, mas saiu.</p>
+      <div class="bast">
+        <div class="bcard">
+          <h3>🧾 Vendas realizadas pelo Kerdos</h3>
+          <div class="placar">
+            <div class="prod"><b>0</b><span>em produção</span></div>
+            <div class="x">×</div>
+            <div class="homo"><b>1</b><span>em homolog 🎉</span></div>
+          </div>
+          <small>Meta original: substituir o sistema de vendas. Meta atual: listar os planos.</small>
+        </div>
+        <div class="bcard" id="cardGrelha">
+          <h3>🔥 Churrasco da primeira venda</h3>
+          <div class="grelha">
+            <div><span>Carvão</span><b>✅ aceso desde 20/10</b></div>
+            <div><span>Picanha maturada</span><b>⏳ aguardando o ok</b></div>
+            <div><span>Chandon</span><b>⏳ só na 1ª venda real</b></div>
+            <div><span>Cerveja</span><b>🧊 gelando há <span id="gelando">—</span></b></div>
+          </div>
+          <div class="termo"><i id="termo"></i></div>
+          <small>Temperatura da grelha: quase lá™. Por enquanto, o time ficou só com a metade da picanha.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="arrojo-sec">
+    <div class="wrap">
+      <span class="kicker">Métrica proprietária</span>
       <h2>🚀 Nível de arrojo</h2>
       <p class="sub">Escala oficial de arrojo: de 0% a 100%. Medição atual abaixo.</p>
       <div class="arrojo" id="arrojo">
@@ -522,11 +684,30 @@
     </div>
   </section>
 
-  <section>
+  <section id="bastidores">
     <div class="wrap">
+      <span class="kicker">Vazou</span>
       <h2>🕵️ Bastidores do time</h2>
       <p class="sub">Indicadores que não aparecem no Jira.</p>
       <div class="bast">
+
+        <div class="bcard rn">
+          <h3>📦 Release notes — Kerdos v0.0.1-rc47</h3>
+          <ul>
+            <li><span class="tag fix">FIX</span>Planos pararam de ser listados. <small>Status: identificado ≠ ajustado.</small></li>
+            <li><span class="tag bug">BUG</span>Item 6 não salva os planos. <small>Tava funcionando e do nada parou. Detalhe: "só" não emite contrato e "só" não fatura.</small></li>
+            <li><span class="tag feat">FEAT</span>Testes automatizados do projeto inteiro, entregues em 1 dia. <small>Dev responsável: o Claude.</small></li>
+            <li><span class="tag bug">BUG</span>Quanto mais usamos os fluxos, mais achamos erros. <small>Ninguém pensou nisso.</small></li>
+            <li><span class="tag infra">INFRA</span>Operação IAssistida: time reestruturado com IA. <small>"Claudinho rodando, daqui a pouco tá pronto."</small></li>
+          </ul>
+        </div>
+
+        <div class="bcard devia" id="cardDevia">
+          <h3>📣 Contador de "mas isso devia tá pronto"</h3>
+          <div class="devia-val" id="deviaVal">228</div>
+          <p style="text-align:center;margin:8px 0 0">vezes ditas em call (e contando)</p>
+          <small>Começou em 228 no dia 20/10. Atualiza sozinho, porque a frase também.</small>
+        </div>
 
         <div class="bcard" id="cardLarissa">
           <h3>🔥 Larissa: Departamento de Queimadas</h3>
@@ -570,8 +751,9 @@
     </div>
   </section>
 
-  <section>
+  <section id="linha">
     <div class="wrap">
+      <span class="kicker">Arquivo histórico</span>
       <h2>📜 Linha do tempo das desculpas</h2>
       <p class="sub">Registros históricos, com reconstituição artística.</p>
       <div class="timeline" id="timeline"></div>
@@ -585,16 +767,16 @@
         <p class="sub">Sua opinião é muito importante para nós (mentira).</p>
         <label>Seu nome <input type="text" id="pNome" placeholder="Ex: Estagiário otimista" autocomplete="off"></label>
         <fieldset>
-          <legend>Você acha que vão entregar o projeto?</legend>
-          <button type="button" class="btn opt" data-v="sim">✅ Sim</button>
-          <button type="button" class="btn opt nao" data-v="nao">❌ Não</button>
+          <legend>Enquete: Entrega Kerdos</legend>
+          <button type="button" class="btn opt" data-v="sim">✅ Termina hoje</button>
+          <button type="button" class="btn opt nao" data-v="nao">🗓️ Só daqui 2 anos</button>
         </fieldset>
         <div class="pres hidden" id="pRes"></div>
       </form>
     </div>
   </section>
 
-  <section>
+  <section id="anderson">
     <div class="wrap">
       <div class="anderson">
         <h2>🤔 Anderson já foi demitido?</h2>
@@ -617,7 +799,8 @@
     <div class="wrap">
       <h2>📊 Painel de status (super oficial)</h2>
       <div class="board">
-        <div class="tile"><h3>Status</h3><div class="v blink">🟡 EM ANDAMENTO</div></div>
+        <div class="tile"><h3>Status</h3><div class="v blink">🟡 EM HOMOLOGAÇÃO</div></div>
+        <div class="tile"><h3>Board do projeto</h3><div class="v">🔴 Tudo vermelho</div></div>
         <div class="tile"><h3>Progresso</h3><div class="v">87%</div><div class="prog"><i></i></div><small style="color:var(--muted)">(desde 15/10/2024)</small></div>
         <div class="tile"><h3>Próxima entrega</h3><div class="v" id="proxEntrega">—</div><small style="color:var(--muted)">(prazo recalculado automaticamente)</small></div>
         <div class="tile"><h3>Confiança do time</h3><div class="v">📉 Sim</div></div>
@@ -634,11 +817,11 @@
   <img src="assets/unifique-logo.svg" alt="Unifique">
   <p><b>Paródia.</b> Site não oficial, feito com carinho e zero ligação com a Unifique.<br>
   Logos e marcas pertencem à Unifique Telecomunicações S.A.<br>
-  Nenhum Kerdos foi entregue durante a produção deste site.</p>
+  Nenhum Kerdos foi entregue durante a produção deste site.<br>
+  <small>Atualizado em 22/10/2026, logo após o go-live ser adiado.</small></p>
 </footer>
 
 <div class="walker" aria-hidden="true">🐌</div>
-<button type="button" class="som" id="som" aria-pressed="false">🔇 Ligar som</button>
 <audio id="audio" src="assets/fundo.mp3" loop preload="auto"></audio>
 <div class="grito" id="grito" aria-live="polite"><span class="grito-ico">🗣️</span><span id="gritoTxt"></span></div>
 <div class="toast" id="toast"></div>
@@ -666,6 +849,7 @@
   const TZ = 'America/Sao_Paulo';
   const OFICIAL = new Date('2026-10-15T00:00:00-03:00');
   const REAL = new Date('2024-10-15T00:00:00-03:00');
+  const WR = new Date('2026-10-15T20:40:00-03:00');
   const fmtNum = n => Math.floor(n).toLocaleString('pt-BR');
   const fmtData = new Intl.DateTimeFormat('pt-BR', { timeZone: TZ, day: '2-digit', month: '2-digit', year: 'numeric' });
   const fmtDataHora = new Intl.DateTimeFormat('pt-BR', {
@@ -706,6 +890,8 @@
     setNum('m', pad(Math.floor(s % 3600 / 60)));
     setNum('s', pad(s % 60));
     $('agora').textContent = fmtDataHora.format(now).replace(',', '');
+    $('kDias').textContent = fmtNum(s / 86400);
+    $('kWr').textContent = fmtNum((now - WR) / 3600000);
 
     const real = now - REAL;
     const rs = real / 1000, rh = rs / 3600, rd = rh / 24;
@@ -725,12 +911,50 @@
   tick();
   setInterval(tick, 1000);
 
-  // Próxima entrega: sempre a próxima sexta-feira (claro)
+  // Próxima entrega: sempre a próxima segunda-feira (claro)
   (function () {
     const d = new Date();
-    d.setDate(d.getDate() + ((5 - d.getDay() + 7) % 7 || 7));
+    d.setDate(d.getDate() + ((1 - d.getDay() + 7) % 7 || 7));
     $('proxEntrega').textContent = fmtData.format(d);
   })();
+
+  // ---- Go-live: segunda 26/10 14h; passou, adia pra segunda seguinte ----
+  const GL_BASE = new Date('2026-10-26T14:00:00-03:00');
+  const SEMANA = 7 * 86400000;
+  const fmtDiaSemana = new Intl.DateTimeFormat('pt-BR', { timeZone: TZ, weekday: 'long', day: '2-digit', month: '2-digit' });
+  function goLive(now) {
+    const extra = now > GL_BASE ? Math.ceil((now - GL_BASE) / SEMANA) : 0;
+    return { alvo: new Date(GL_BASE.getTime() + extra * SEMANA), adiamentos: 3 + extra };
+  }
+  function glTick() {
+    const now = new Date(), g = goLive(now);
+    const s = Math.max(0, Math.floor((g.alvo - now) / 1000));
+    $('glClock').textContent = `${Math.floor(s / 86400)}d ${pad(Math.floor(s % 86400 / 3600))}:${pad(Math.floor(s % 3600 / 60))}:${pad(s % 60)}`;
+    const txt = fmtDiaSemana.format(g.alvo).replace(/^./, c => c.toUpperCase());
+    if ($('glAlvoTxt').textContent !== txt) $('glAlvoTxt').textContent = txt;
+    $('glAdia').textContent = g.adiamentos;
+    $('kAdia').textContent = g.adiamentos;
+  }
+  glTick(); setInterval(glTick, 1000);
+
+  // ---- "Mas isso devia tá pronto": 228 em 20/10 20:38, +1 a cada 20 min ----
+  const DEVIA_BASE = new Date('2026-10-20T20:38:00-03:00');
+  const devia = () => 228 + Math.max(0, Math.floor((Date.now() - DEVIA_BASE) / 1200000));
+  function deviaTick() {
+    const el = $('deviaVal'), v = devia().toLocaleString('pt-BR');
+    if (el.textContent === v) return;
+    el.textContent = v;
+    el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+  }
+  deviaTick(); setInterval(deviaTick, 5000);
+
+  // ---- Cerveja gelando desde 20/10 09:53 ----
+  const GELA = new Date('2026-10-20T09:53:00-03:00');
+  function gelaTick() {
+    const h = Math.max(0, Math.floor((Date.now() - GELA) / 3600000));
+    $('gelando').textContent = `${Math.floor(h / 24)}d ${h % 24}h`;
+  }
+  gelaTick(); setInterval(gelaTick, 60000);
 
   // ---- Barra de loading travada ----
   const msgs = [
@@ -747,7 +971,6 @@
 
 
   // ---- War room ----
-  const WR = new Date('2026-10-15T20:40:00-03:00');
   $('wrInicio').textContent = fmtDataHora.format(WR).replace(',', '').slice(0, 16);
   const logs = [
     '[INFO] Reunião iniciada para decidir horário da próxima reunião',
@@ -765,7 +988,16 @@
     '[WARN] O problema vai ser o teste (previsão confirmada)',
     '[INFO] Plano B descartado. Plano C também. Iniciando Plano K(erdos)',
     '[WARN] Ar-condicionado em 16°C, moral em 3°C',
-    '[INFO] "Só mais 5 minutinhos" — há 6 horas'
+    '[INFO] "Só mais 5 minutinhos" — há 6 horas',
+    '[INFO] Microfones abertos: 0. Câmeras abertas: 0. Pessoas na call: todas.',
+    '[CALL] "Como estamos, pessoal?" (silêncio)',
+    '[ERRO] Planos pararam de ser listados (estava funcionando)',
+    '[ERRO] Item 6 sem planos. Contrato sem emitir. Faturamento sem faturar.',
+    '[INFO] Go-live das 14h adiado pra segunda',
+    '[WARN] Kerdos: "Aguardando por essa mensagem. Essa ação pode levar alguns instantes."',
+    '[INFO] Primeira venda realizada! (ambiente: homologação)',
+    '[INFO] Claude rodando os testes automatizados do projeto inteiro',
+    '[WARN] Expediente encerrado às 03:00. Retorno às 08:30.'
   ];
   let li = 0;
   function addLog() {
@@ -778,7 +1010,9 @@
   addLog(); setInterval(addLog, 3500);
 
   // Frases típicas, digitadas tipo máquina de escrever
-  const frasesWr = ['Vai melhorar.', 'Ano que vem melhora.', 'Isso deveria estar pronto.', 'Quem aprovou isso?', 'Não é possível que ainda não tá pronto.', 'Amanhã cedo a gente vê.', 'Sendo assim, prefiro não.', 'Ai, paremo.'];
+  const frasesWr = ['Vai melhorar.', 'Ano que vem melhora.', 'Isso deveria estar pronto.', 'Quem aprovou isso?', 'Não é possível que ainda não tá pronto.', 'Amanhã cedo a gente vê.', 'Sendo assim, prefiro não.', 'Ai, paremo.',
+    'Prazo apertado, mas estamos esperançosos, vai dar certo.', 'Claudinho rodando, daqui a pouco tá pronto.',
+    'Mas isso devia tá pronto.', 'Meu Deus do céu.', 'Isso vai ter uma consequência pra equipe.', 'Entrega é uma palavra bem forte.'];
   let fi = 0;
   function digitar() {
     const alvo = frasesWr[fi++ % frasesWr.length], el = $('wrFrase');
@@ -799,6 +1033,7 @@
     $('wrCafe').textContent = (hrs * 1.8).toLocaleString('pt-BR', { maximumFractionDigits: 1 });
     $('wrEnerg').textContent = fmtNum(hrs * 2.3);
     $('wrMsg').textContent = fmtNum(s / 240);
+    $('wrDias').textContent = fmtNum(s / 86400 + 1);
   }
   wrTick(); setInterval(wrTick, 1000);
 
@@ -867,7 +1102,7 @@
       document.body.classList.remove('shake'); void document.body.offsetWidth; document.body.classList.add('shake');
       chuva(20);
     } else {
-      $('pRes').textContent = `✅ Resposta registrada, ${nomeVotante()}! Você e 99,7% dos votantes têm noção da realidade. Os outros 0,3% estão em homologação.`;
+      $('pRes').textContent = `✅ Resposta registrada, ${nomeVotante()}! Você e 99,7% dos votantes têm noção da realidade. Os outros 0,3% estão em homologação (junto com a única venda).`;
       $('pRes').classList.remove('hidden');
     }
   }));
@@ -880,8 +1115,14 @@
     ['03/2025', '"Tá em homologação."', 'Homologação: lugar mágico onde o tempo não passa.'],
     ['07/2025', '"Depende do outro time."', 'O outro time diz que depende deste time.'],
     ['01/2026', '"Esse ano sai."', 'Tecnicamente ainda pode ser verdade. Por pouco.'],
-    ['15/10/2026', 'Novo prazo oficial! Agora vai! 💪', 'Não foi.'],
-    ['16/10/2026', '"Deploy na sexta? Melhor não."', 'Hoje. Agora. Enquanto você lê isso.']
+    ['15/10/2026', 'Novo prazo oficial! "The day of the glory." 💪', 'Não foi. À noite, abre a war room.'],
+    ['16/10/2026', 'Lançado o contador online de atraso.', 'Já nasceu com 2 anos de atraso. Igual ao projeto.'],
+    ['16/10/2026', 'Plano: testes automatizados do projeto inteiro em 1 dia.', 'O projeto inteiro não teve teste. Agora vai ter em 24h.'],
+    ['19/10/2026', '🎉 Primeira venda feita pelo Kerdos!', 'Em homologação.'],
+    ['20/10/2026', '"Identifiquei ontem por que os planos não estão aparecendo."', 'Identificou. Ajustar é outra história.'],
+    ['21/10/2026', 'A finaleira. War room até as 3h da manhã.', '"Entrega é uma palavra bem forte."'],
+    ['22/10/2026', 'Go-live marcado pras 14h, com link e tudo.', 'Às 17h: adiado pra segunda. "Isso vai ter uma consequência pra equipe."'],
+    ['26/10/2026', 'Próximo go-live. 🚀', 'Confia.']
   ];
   const tl = $('timeline');
   eventos.forEach(([t, p, s]) => {
@@ -957,7 +1198,7 @@
   });
 
   // ---- Call ao vivo ----
-  const falasCall = ['“Lari tá aí?”', '“Kleber tá aí?”', '“Tão vendo minha tela?”', '“Lari tá aí?” (de novo)', '“Kleber? Kleber??”', '“Agora tão vendo minha tela?”'];
+  const falasCall = ['“Lari tá aí?”', '“Kleber tá aí?”', '“Tão vendo minha tela?”', '“Como estamos, pessoal?”', '“Lari tá aí?” (de novo)', '“Kleber? Kleber??”', '“Alguém abre o mic?”', '“Agora tão vendo minha tela?”'];
   let ci = 0;
   setInterval(() => {
     const b = $('wrCall');
@@ -972,7 +1213,7 @@
   function atualizaSom() {
     const tocando = !audio.paused;
     som.setAttribute('aria-pressed', tocando);
-    som.textContent = tocando ? '🔊 Som ligado' : '🔇 Ligar som';
+    som.innerHTML = tocando ? '🔊 <span class="som-txt">Som ligado</span>' : '🔇 <span class="som-txt">Ligar som</span>';
   }
   audio.addEventListener('play', atualizaSom);
   audio.addEventListener('pause', atualizaSom);
@@ -989,9 +1230,11 @@
   ['pointerdown', 'keydown', 'touchstart'].forEach(ev => document.addEventListener(ev, tentaTocar, { passive: true }));
 
   // ---- Gritos aleatórios ----
-  const gritos = ['MAS TAMBÉM COM ESSA CARA DE PUTA!', 'O PROBLEMA VAI SER O TESTE.', 'ERRO DO BÉQUI!', 'ISSO DEVERIA ESTAR PRONTO!', 'SENDO ASSIM, PREFIRO NÃO.', 'AI, PAREMO.'];
+  const gritos = ['MAS TAMBÉM COM ESSA CARA DE PUTA!', 'O PROBLEMA VAI SER O TESTE.', 'ERRO DO BÉQUI!', 'ISSO DEVERIA ESTAR PRONTO!', 'SENDO ASSIM, PREFIRO NÃO.', 'AI, PAREMO.',
+    'SE NÃO SUBIR ATÉ AS 14 VOCÊS VÃO VER!', 'MEU DEUS DO CÉU!', 'CLAUDINHO RODANDO!', 'SE NÃO TEM BUG É PQ NINGUÉM TÁ USANDO.'];
   let gi = 0;
   function gritar() {
+    if (document.hidden) return;
     $('gritoTxt').textContent = gritos[gi++ % gritos.length];
     $('grito').classList.add('on');
     setTimeout(() => $('grito').classList.remove('on'), 3500);
@@ -999,10 +1242,52 @@
   setTimeout(gritar, 6000);
   setInterval(gritar, 14000);
 
+  // ---- Card churrasco + carimbo do go-live ----
+  quandoVisivel($('cardGrelha'), () => { $('termo').style.width = '97%'; });
+  quandoVisivel($('prazos'), () => setTimeout(() => $('stampGl').classList.add('on'), 300));
+
+  // ---- Nav: destaca a seção visível ----
+  const links = [...document.querySelectorAll('.nav-links a')];
+  const ioNav = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    links.forEach(a => {
+      const on = a.getAttribute('href') === '#' + e.target.id;
+      a.classList.toggle('ativo', on);
+      if (on) a.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    });
+  }), { rootMargin: '-45% 0px -50% 0px' });
+  links.forEach(a => { const sec = document.querySelector(a.getAttribute('href')); if (sec) ioNav.observe(sec); });
+
+  // ---- Boletim pro grupo ----
+  function boletim() {
+    const now = new Date(), g = goLive(now);
+    const dias = Math.floor(Math.max(0, now - OFICIAL) / 86400000);
+    return [
+      `🔢 Contador de atraso do Kerdão, atualizado ${fmtDataHora.format(now).replace(',', '').slice(0, 16)}`,
+      '',
+      `${dias} dias de atraso`,
+      `${g.adiamentos} go-lives adiados`,
+      `0 vendas em produção (1 em homolog 🎉)`,
+      `${fmtNum((now - WR) / 3600000)} horas de war room`,
+      `${devia().toLocaleString('pt-BR')} "mas isso devia tá pronto" falados`,
+      `0 demissões (ainda)`,
+      '',
+      location.href.split('#')[0]
+    ].join('\n');
+  }
+  $('share').addEventListener('click', async () => {
+    const txt = boletim();
+    if (navigator.share && matchMedia('(pointer: coarse)').matches) {
+      try { await navigator.share({ text: txt }); return; } catch (e) { if (e.name === 'AbortError') return; }
+    }
+    try { await navigator.clipboard.writeText(txt); toast('Boletim copiado! Cola lá no grupo 📋'); }
+    catch { toast('Não deu pra copiar. Igual o Kerdos: quase.'); }
+  });
+
   // ---- Chuva de caracóis ----
   function chuva(n) {
     const reduz = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduz) return;
+    if (reduz || document.hidden) return;
     for (let i = 0; i < n; i++) {
       setTimeout(() => {
         const s = document.createElement('div');
